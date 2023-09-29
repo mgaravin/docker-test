@@ -47,6 +47,12 @@ RUN apt install -y apt-utils \
     coreutils \
     vim \
     sudo \
+    libssl-dev \
+    zip \
+    libatomic1 \
+    libnl-route-3-dev \
+    tree \
+    unzip \
     wget
 RUN apt -y install pip
 # Installing all PYTHON packages
@@ -69,7 +75,12 @@ RUN rm -rf /usr/local/bin/cmake || true && rm -rf ~/.local/bin/cmake || true
 RUN wget https://cmake.org/files/v3.20/cmake-3.20.2-linux-x86_64.sh -O /tmp/cmake-3.20.2-linux-x86_64.sh && chmod a+x /tmp/cmake-3.20.2-linux-x86_64.sh && mkdir -p /opt/rh/cmake
 RUN sh /tmp/cmake-3.20.2-linux-x86_64.sh --prefix=/opt/rh/cmake --skip-license
 RUN ln -s /opt/rh/cmake/bin/cmake /usr/local/bin/cmake && cmake --version
+RUN cd /tmp && wget https://github.com/bazelbuild/bazel/releases/download/4.2.3/bazel-4.2.3-installer-linux-x86_64.sh && chmod +x bazel-4.2.3-installer-linux-x86_64.sh && ./bazel-4.2.3-installer-linux-x86_64.sh && bazel --version
 RUN git clone https://github.com/p4lang/p4-dpdk-target --recursive /opt/p4-dpdk-target
 RUN mkdir -p /opt/p4sde/install && cd /opt/p4-dpdk-target && ./autogen.sh && ./configure --prefix=/opt/p4sde/install && make && make install
-RUN cd /opt/ && rm -rf p4-dpdk-target
+RUN cd /opt && rm -rf p4-dpdk-target
+RUN git clone https://github.com/ipdk-io/networking-recipe --recursive /opt/networking-recipe
+RUN cd /opt/networking-recipe/setup && cmake -B build -DCMAKE_INSTALL_PREFIX=/opt/networking-recipe-deps && cmake --build build -j6
+RUN cd /opt && rm -rf networking-recipe
+
 
