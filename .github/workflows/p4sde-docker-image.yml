@@ -1,0 +1,29 @@
+---
+name: 'P4SDE Docker Build for DPDK'
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+concurrency:
+  # if workflow for PR or push is already running stop it, and start new one
+  group: -${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_docker_build_for_dpdk:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'Run Docker Build'
+        working-directory: ./build_images/p4sde-dpdk/ubuntu2004
+        run: |
+          docker build .
+          docker images
