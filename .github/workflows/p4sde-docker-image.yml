@@ -22,8 +22,22 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
+          
       - name: 'Run Docker Build'
         working-directory: ./build_images/p4sde-dpdk/ubuntu2004
         run: |
-          docker build .
+          docker build -t ghcr.io/${{ github.repository_owner }}/p4sde-dpdk/ubuntu2004:sha-${GITHUB_SHA::7}
           docker images
+
+      - name: 'Login to GitHub Container Registry'
+        if: github.event_name == 'push'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'push images to registry'
+        if: github.event_name == 'push'
+        run: |
+           docker push ghcr.io/${{ github.repository_owner }}/p4sde-dpdk/ubuntu2004:sha-${GITHUB_SHA::7}
