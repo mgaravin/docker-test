@@ -46,7 +46,8 @@ RUN apt install -y apt-utils \
     connect-proxy \
     coreutils \
     vim \
-    sudo
+    sudo \
+    wget
 RUN apt -y install pip
 # Installing all PYTHON packages
 RUN python3 -m pip install --no-cache-dir --upgrade pip && \
